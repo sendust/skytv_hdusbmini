@@ -1,0 +1,90 @@
+<!doctype html>
+<meta charset="utf-8">
+<style>
+  body { margin: 0; background: #fff; font-family: "Noto Sans KR", "WenQuanYi Zen Hei", system-ui, sans-serif; }
+  .t { font-size: 15px; fill: #1f2328; }
+  .s { font-size: 12.5px; fill: #57606a; }
+  .h { font-size: 16px; font-weight: 700; fill: #1f2328; }
+  .m { font-family: "DejaVu Sans Mono", monospace; font-size: 12.5px; fill: #57606a; }
+  .lay { font-size: 13px; font-weight: 700; fill: #8c959f; letter-spacing: 1px; }
+  .fx { font-size: 13px; fill: #1f2328; }
+</style>
+<svg width="1200" height="700" viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#57606a"/></marker>
+  </defs>
+  <rect width="1200" height="700" fill="#fff"/>
+  <text x="30" y="40" class="h" style="font-size:21px">소프트웨어 구성</text>
+  <text x="30" y="64" class="s">이 저장소가 만드는 것은 USB 브리지 드라이버 하나. 복조기·튜너는 커널에 있는 드라이버를 그대로 쓰고, 보드와 맞지 않는 부분만 브리지에서 보정</text>
+
+  <!-- user space -->
+  <rect x="30" y="90" width="780" height="120" rx="12" fill="#f6f8fa" stroke="#d0d7de"/>
+  <text x="48" y="114" class="lay">USER SPACE</text>
+  <rect x="50" y="128" width="170" height="62" rx="8" fill="#fff" stroke="#8c959f"/>
+  <text x="135" y="154" text-anchor="middle" class="t">dvbv5-zap / scan</text>
+  <text x="135" y="174" text-anchor="middle" class="s">v4l-utils</text>
+  <rect x="235" y="128" width="170" height="62" rx="8" fill="#fff" stroke="#8c959f"/>
+  <text x="320" y="154" text-anchor="middle" class="t">TSDuck</text>
+  <text x="320" y="174" text-anchor="middle" class="s">tsp · tsscan · tslsdvb</text>
+  <rect x="420" y="128" width="170" height="62" rx="8" fill="#fff" stroke="#8c959f"/>
+  <text x="505" y="154" text-anchor="middle" class="t">atscscan 웹 UI</text>
+  <text x="505" y="174" text-anchor="middle" class="s">별도 프로젝트</text>
+  <rect x="605" y="128" width="185" height="62" rx="8" fill="#fff" stroke="#8c959f" stroke-dasharray="5 4"/>
+  <text x="697" y="154" text-anchor="middle" class="t">tools/skytv.py</text>
+  <text x="697" y="174" text-anchor="middle" class="s">pyusb 직접 제어 (개발용)</text>
+
+  <!-- dev nodes -->
+  <rect x="30" y="230" width="580" height="44" rx="8" fill="#ddf4ff" stroke="#54aeff"/>
+  <text x="320" y="257" text-anchor="middle" class="m" style="fill:#0550ae;font-size:14px">/dev/dvb/adapter0/ frontend0 · demux0 · dvr0</text>
+  <line x1="320" y1="210" x2="320" y2="228" stroke="#57606a" stroke-width="2" marker-end="url(#a)"/>
+
+  <!-- kernel -->
+  <rect x="30" y="292" width="780" height="270" rx="12" fill="#f6f8fa" stroke="#d0d7de"/>
+  <text x="48" y="316" class="lay">KERNEL</text>
+  <rect x="50" y="328" width="540" height="40" rx="8" fill="#fff" stroke="#8c959f"/>
+  <text x="320" y="353" text-anchor="middle" class="t">dvb-core (frontend · demux · dvr)  ·  dvb_usb_v2 (URB 스트림, I2C 어댑터)</text>
+  <line x1="320" y1="274" x2="320" y2="326" stroke="#57606a" stroke-width="2" marker-end="url(#a)"/>
+
+  <rect x="50" y="385" width="250" height="160" rx="10" fill="#fff" stroke="#0969da" stroke-width="2.5"/>
+  <text x="175" y="413" text-anchor="middle" class="h" style="fill:#0550ae">dvb_usb_skytv</text>
+  <text x="175" y="433" text-anchor="middle" class="s">이 저장소 (driver/)</text>
+  <text x="66" y="460" class="m">FX2 펌웨어 업로드</text>
+  <text x="66" y="479" class="m">GPIO 전원·리셋</text>
+  <text x="66" y="498" class="m">I2C 중계 (EP1 명령)</text>
+  <text x="66" y="517" class="m">스트림 시작/정지</text>
+  <text x="66" y="536" class="m">frontend ops 보정 (오른쪽)</text>
+
+  <rect x="320" y="385" width="130" height="75" rx="10" fill="#fff" stroke="#1a7f37" stroke-width="2"/>
+  <text x="385" y="413" text-anchor="middle" class="h">lgdt3305</text>
+  <text x="385" y="433" text-anchor="middle" class="s">LGDT3304 모드</text>
+  <text x="385" y="451" text-anchor="middle" class="m">0x59</text>
+  <rect x="460" y="385" width="130" height="75" rx="10" fill="#fff" stroke="#1a7f37" stroke-width="2"/>
+  <text x="525" y="413" text-anchor="middle" class="h">xc5000</text>
+  <text x="525" y="433" text-anchor="middle" class="s">IF 6 MHz</text>
+  <text x="525" y="451" text-anchor="middle" class="m">0x61</text>
+  <text x="455" y="490" text-anchor="middle" class="s">커널 기본 드라이버 (dvb_attach)</text>
+  <line x1="300" y1="422" x2="318" y2="422" stroke="#57606a" stroke-width="2" marker-end="url(#a)"/>
+
+  <rect x="320" y="503" width="470" height="44" rx="8" fill="#fff" stroke="#8c959f"/>
+  <text x="335" y="521" class="m" style="font-size:12px">펌웨어: /lib/firmware/dvb-usb-skytv-hdusbmini.fw (FX2)</text>
+  <text x="335" y="539" class="m" style="font-size:12px">       /lib/firmware/dvb-fe-xc5000-1.6.114.fw (튜너)</text>
+
+  <!-- fixups -->
+  <rect x="840" y="292" width="330" height="270" rx="12" fill="#fff8c5" stroke="#d4a72c"/>
+  <text x="860" y="320" class="h">브리지에서 보정한 커널 동작</text>
+  <text x="860" y="352" class="fx">① VSB 고정 NCO → 0</text>
+  <text x="880" y="372" class="s">고정값이면 6 MHz IF에서 lock 실패</text>
+  <text x="860" y="402" class="fx">② TP_CTRL_1 = 0x1b (gated clock)</text>
+  <text x="880" y="422" class="s">init 테이블의 0x5b가 남으면 TS가 깨짐</text>
+  <text x="860" y="452" class="fx">③ sleep 이후 AGC·ADC 다시 켜기</text>
+  <text x="880" y="472" class="s">안 하면 두 번째 열기부터 lock 실패</text>
+  <text x="860" y="502" class="fx">④ 최대 주파수 858 → 1002 MHz</text>
+  <text x="880" y="522" class="s">CATV 135번(861 MHz) 튜닝 허용</text>
+
+  <!-- USB -->
+  <rect x="30" y="582" width="780" height="92" rx="12" fill="#f6f8fa" stroke="#d0d7de"/>
+  <text x="48" y="606" class="lay">USB / DEVICE</text>
+  <text x="48" y="632" class="m">EP1: 08 I2C 쓰기 · 09 I2C 쓰기+읽기 · 0d/0e GPIO · 36 03 00 01 스트림 시작 · 37 정지</text>
+  <text x="48" y="654" class="m">EP2: TS bulk (8 × 16 KB URB)       FX2 → LGDT3304 → XC5000 → 안테나</text>
+  <line x1="175" y1="545" x2="175" y2="580" stroke="#57606a" stroke-width="2" marker-end="url(#a)" marker-start="url(#a)"/>
+</svg>

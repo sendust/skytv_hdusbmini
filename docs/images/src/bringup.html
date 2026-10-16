@@ -1,0 +1,44 @@
+<!doctype html>
+<meta charset="utf-8">
+<style>
+  body { margin: 0; background: #fff; font-family: "Noto Sans KR", "WenQuanYi Zen Hei", system-ui, sans-serif; }
+  .wrap { width: 1200px; padding: 26px 30px 30px; box-sizing: border-box; }
+  h1 { font-size: 21px; margin: 0 0 4px; color: #1f2328; }
+  p.sub { margin: 0 0 18px; color: #57606a; font-size: 13px; }
+  .row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 34px; margin-bottom: 30px; position: relative; }
+  .step { position: relative; border: 1.5px solid #d0d7de; border-radius: 10px; padding: 12px 14px; background: #f6f8fa; min-height: 136px; }
+  .step::after { content: "→"; position: absolute; right: -27px; top: 50%; transform: translateY(-50%); color: #57606a; font-size: 22px; }
+  .row .step:last-child::after { content: none; }
+  .n { display: inline-block; width: 24px; height: 24px; border-radius: 50%; background: #0969da; color: #fff; font-weight: 700; text-align: center; line-height: 24px; font-size: 13px; margin-right: 6px; }
+  .tt { font-weight: 700; font-size: 15px; color: #1f2328; }
+  .who { float: right; font-size: 11px; color: #8c959f; margin-top: 4px; }
+  ul { margin: 8px 0 0; padding-left: 18px; color: #424a53; font-size: 12.5px; line-height: 1.55; }
+  code { font-family: "DejaVu Sans Mono", monospace; font-size: 12px; background: #fff; border: 1px solid #d0d7de; border-radius: 4px; padding: 0 4px; }
+  .ok { border-color: #1a7f37; background: #dafbe1; }
+  .down { text-align: right; color: #57606a; font-size: 13px; margin: -22px 0 8px; }
+</style>
+<div class="wrap">
+  <h1>장치 초기화와 수신 순서</h1>
+  <p class="sub">USB를 꽂은 순간부터 TS가 나오기까지 드라이버가 하는 일 (Windows 드라이버 분석 + 실측)</p>
+  <div class="row">
+    <div class="step"><span class="n">1</span><span class="tt">연결 (cold)</span><span class="who">USB core</span>
+      <ul><li>FX2 부트 ROM 상태</li><li><code>iManufacturer = 0</code> → COLD</li><li>EEPROM은 VID/PID만 보유</li></ul></div>
+    <div class="step"><span class="n">2</span><span class="tt">FX2 펌웨어 업로드</span><span class="who">download_firmware</span>
+      <ul><li>vendor req <code>0xA0</code>: CPUCS=1 → RAM 16 KB → CPUCS=0</li><li>재연결: Manufacturer "SKYDIGITAL" → WARM</li></ul></div>
+    <div class="step"><span class="n">3</span><span class="tt">전원 · 리셋 (GPIO)</span><span class="who">read_config</span>
+      <ul><li><code>PD6=1</code> 튜너 전원, <code>PD1=1</code> 튜너 리셋 해제</li><li><code>PD7</code> 0→1 복조기 리셋</li><li>I2C에 0x61, 0x59가 나타남</li></ul></div>
+    <div class="step"><span class="n">4</span><span class="tt">프론트엔드 연결</span><span class="who">frontend/tuner_attach</span>
+      <ul><li><code>lgdt3305_attach</code> (LGDT3304)</li><li><code>xc5000_attach</code> (IF 6000 kHz)</li><li>ops 래핑: init, set_frontend</li></ul></div>
+  </div>
+  <div class="down">↓</div>
+  <div class="row">
+    <div class="step"><span class="n">5</span><span class="tt">frontend 열기</span><span class="who">init</span>
+      <ul><li>LGDT3304 init 테이블 + soft reset</li><li>sleep 후 AGC·ADC 복구 (보정 ③)</li></ul></div>
+    <div class="step"><span class="n">6</span><span class="tt">XC5000 펌웨어</span><span class="who">xc5000</span>
+      <ul><li><code>dvb-fe-xc5000-1.6.114.fw</code> I2C 로드</li><li>RESET → 콜백으로 <code>PD1</code> 펄스</li><li>61바이트 초과 쓰기는 주소 헤더 반복 분할</li></ul></div>
+    <div class="step"><span class="n">7</span><span class="tt">튜닝</span><span class="who">set_frontend</span>
+      <ul><li>XC5000: DTV6 (video 0x8002 / audio 0x00C0), IF 6 MHz</li><li>LGDT3304: VSB + NCO=0, TP_CTRL_1=0x1b (보정 ①②)</li></ul></div>
+    <div class="step ok"><span class="n">8</span><span class="tt">스트림</span><span class="who">streaming_ctrl</span>
+      <ul><li><code>36 03 00 01</code> (내부 IFCLK) 시작</li><li>EP2 bulk → dvr0</li><li>ATSC 19,392,658 b/s</li></ul></div>
+  </div>
+</div>

@@ -1,0 +1,112 @@
+<!doctype html>
+<meta charset="utf-8">
+<style>
+  body { margin: 0; background: #fff; font-family: "Noto Sans KR", "WenQuanYi Zen Hei", system-ui, sans-serif; }
+  svg { display: block; }
+  .t { font-size: 15px; fill: #1f2328; }
+  .s { font-size: 12.5px; fill: #57606a; }
+  .h { font-size: 17px; font-weight: 700; fill: #1f2328; }
+  .m { font-family: "DejaVu Sans Mono", monospace; font-size: 12.5px; fill: #57606a; }
+  .lbl { font-size: 12.5px; fill: #0969da; font-weight: 600; }
+  .lblg { font-size: 12.5px; fill: #1a7f37; font-weight: 600; }
+  .lblo { font-size: 12.5px; fill: #9a6700; font-weight: 600; }
+</style>
+<svg width="1200" height="640" viewBox="0 0 1200 640" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#57606a"/></marker>
+    <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0969da"/></marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a7f37"/></marker>
+    <marker id="ao" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9a6700"/></marker>
+  </defs>
+  <rect width="1200" height="640" fill="#fff"/>
+  <text x="30" y="40" class="h" style="font-size:21px">SKYTV HD USB mini (USB 1c6c:04c9) 하드웨어 구성</text>
+  <text x="30" y="64" class="s">Windows 드라이버 분석 + I2C 스캔으로 확인한 구성</text>
+
+  <!-- board outline -->
+  <rect x="300" y="90" width="870" height="520" rx="14" fill="#f6f8fa" stroke="#d0d7de"/>
+  <text x="318" y="116" class="s">보드</text>
+
+  <!-- host -->
+  <rect x="30" y="250" width="200" height="130" rx="10" fill="#fff" stroke="#8c959f" stroke-width="1.5"/>
+  <text x="130" y="290" text-anchor="middle" class="h">PC (Ubuntu)</text>
+  <text x="130" y="314" text-anchor="middle" class="s">dvb_usb_skytv</text>
+  <text x="130" y="334" text-anchor="middle" class="s">lgdt3305 · xc5000</text>
+  <text x="130" y="354" text-anchor="middle" class="s">/dev/dvb/adapter0</text>
+
+  <!-- USB link -->
+  <line x1="230" y1="300" x2="350" y2="300" stroke="#0969da" stroke-width="2.5" marker-end="url(#ab)" marker-start="url(#ab)"/>
+  <text x="290" y="290" text-anchor="middle" class="lbl">USB 2.0 HS</text>
+  <text x="290" y="320" text-anchor="middle" class="m">EP1 명령</text>
+  <line x1="350" y1="345" x2="230" y2="345" stroke="#1a7f37" stroke-width="2.5" marker-end="url(#ag)"/>
+  <text x="290" y="365" text-anchor="middle" class="lblg">EP2 TS bulk</text>
+
+  <!-- FX2 -->
+  <rect x="350" y="210" width="250" height="230" rx="10" fill="#fff" stroke="#0969da" stroke-width="2"/>
+  <text x="475" y="242" text-anchor="middle" class="h">Cypress FX2</text>
+  <text x="475" y="262" text-anchor="middle" class="s">CY7C68013 (8051 + USB)</text>
+  <text x="370" y="292" class="m">펌웨어: RAM 전용 16 KB</text>
+  <text x="370" y="310" class="m">(연결 시 vendor req 0xA0)</text>
+  <text x="370" y="336" class="m">EP1 OUT/IN : I2C·GPIO·스트림</text>
+  <text x="370" y="354" class="m">EP2 IN     : TS (slave FIFO)</text>
+  <text x="370" y="380" class="m">I2C master (7-bit 주소)</text>
+  <text x="370" y="398" class="m">GPIO PA / PD</text>
+  <text x="370" y="424" class="m">EEPROM C0 부트 (VID/PID)</text>
+
+  <!-- I2C bus -->
+  <line x1="600" y1="150" x2="1140" y2="150" stroke="#9a6700" stroke-width="3"/>
+  <line x1="560" y1="210" x2="560" y2="150" stroke="#9a6700" stroke-width="3"/>
+  <line x1="560" y1="150" x2="600" y2="150" stroke="#9a6700" stroke-width="3"/>
+  <text x="612" y="140" class="lblo">I2C</text>
+
+  <!-- EEPROM -->
+  <line x1="670" y1="150" x2="670" y2="180" stroke="#9a6700" stroke-width="2"/>
+  <rect x="620" y="180" width="100" height="64" rx="8" fill="#fff" stroke="#8c959f"/>
+  <text x="670" y="206" text-anchor="middle" class="t">EEPROM</text>
+  <text x="670" y="228" text-anchor="middle" class="m">0x50</text>
+
+  <!-- CX25843 -->
+  <line x1="820" y1="150" x2="820" y2="180" stroke="#9a6700" stroke-width="2"/>
+  <rect x="740" y="180" width="160" height="64" rx="8" fill="#fff" stroke="#8c959f" stroke-dasharray="5 4"/>
+  <text x="820" y="204" text-anchor="middle" class="t">CX25843 (0x44)</text>
+  <text x="820" y="226" text-anchor="middle" class="s">아날로그 디코더 · 미사용</text>
+
+  <!-- LGDT3304 -->
+  <line x1="935" y1="150" x2="935" y2="330" stroke="#9a6700" stroke-width="2"/>
+  <rect x="700" y="330" width="250" height="110" rx="10" fill="#fff" stroke="#1a7f37" stroke-width="2"/>
+  <text x="825" y="362" text-anchor="middle" class="h">LG LGDT3304</text>
+  <text x="825" y="384" text-anchor="middle" class="s">ATSC 8-VSB / QAM 복조기</text>
+  <text x="825" y="406" text-anchor="middle" class="m">I2C 0x59 · 16-bit 레지스터</text>
+  <text x="825" y="426" text-anchor="middle" class="m">병렬 TS · gated clock</text>
+
+  <!-- XC5000 -->
+  <line x1="1060" y1="150" x2="1060" y2="330" stroke="#9a6700" stroke-width="2"/>
+  <rect x="985" y="330" width="160" height="110" rx="10" fill="#fff" stroke="#1a7f37" stroke-width="2"/>
+  <text x="1065" y="362" text-anchor="middle" class="h">Xceive XC5000</text>
+  <text x="1065" y="384" text-anchor="middle" class="s">실리콘 튜너</text>
+  <text x="1065" y="406" text-anchor="middle" class="m">I2C 0x61</text>
+  <text x="1065" y="426" text-anchor="middle" class="m">54–1002 MHz</text>
+
+  <!-- RF in -->
+  <rect x="1060" y="540" width="100" height="44" rx="8" fill="#fff" stroke="#8c959f"/>
+  <text x="1110" y="567" text-anchor="middle" class="t">RF 입력 (F)</text>
+  <line x1="1110" y1="540" x2="1110" y2="442" stroke="#1a7f37" stroke-width="2.5" marker-end="url(#ag)"/>
+  <text x="1118" y="500" class="lblg">RF</text>
+
+  <!-- IF -->
+  <line x1="985" y1="400" x2="952" y2="400" stroke="#1a7f37" stroke-width="2.5" marker-end="url(#ag)"/>
+  <text x="968" y="466" text-anchor="middle" class="lblg">IF 6 MHz</text>
+  <line x1="968" y1="402" x2="968" y2="452" stroke="#1a7f37" stroke-width="1" stroke-dasharray="2 3"/>
+
+  <!-- TS -->
+  <path d="M700,400 L650,400 L650,415 L602,415" fill="none" stroke="#1a7f37" stroke-width="2.5" marker-end="url(#ag)"/>
+  <text x="650" y="455" text-anchor="middle" class="lblg">MPEG-TS 8-bit 병렬</text>
+  <text x="650" y="473" text-anchor="middle" class="lblg">19.39 Mbps</text>
+
+  <!-- GPIO -->
+  <path d="M475,440 L475,575 L1010,575 L1010,444" fill="none" stroke="#0969da" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ab)"/>
+  <line x1="825" y1="575" x2="825" y2="444" stroke="#0969da" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ab)"/>
+  <text x="487" y="565" class="lbl">GPIO (FX2 포트 D)</text>
+  <text x="817" y="520" text-anchor="end" class="m">PD7 0→1 : 복조기 /RESET</text>
+  <text x="1002" y="520" text-anchor="end" class="m">PD6 전원</text>
+  <text x="1002" y="538" text-anchor="end" class="m">PD1 /RESET</text>
+</svg>
