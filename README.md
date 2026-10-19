@@ -33,7 +33,7 @@ Skydigital **SKYTV HD USB mini**(USB `1c6c:04c9`) ATSC 수신기를 리눅스에
 | lock 상태, SNR(0.1 dB 단위), 신호 품질, UCB | 동작 확인 (BER은 커널 lgdt3305가 지원하지 않아 항상 0) |
 | 열기·닫기 반복, 채널 전환 | 동작 확인 |
 | 54 ~ 1002 MHz 튜닝 | 동작 확인 (CATV 135번 861 MHz 포함) |
-| 콜드 플러그 (USB를 꽂을 때 드라이버가 FX2 펌웨어를 올리는 경로) | **미검증** — 코드는 있지만 지금까지는 펌웨어가 이미 올라간 상태에서만 로드됨 |
+| 콜드 플러그 (USB를 꽂을 때 드라이버가 FX2 펌웨어를 올리는 경로) | 동작 확인 (2026-10-19, USB 재연결 후 cold → 펌웨어 업로드 → warm → 수신) |
 | QAM (J.83B 케이블) | **미검증** — 커널 경로는 연결되어 있음 |
 | 아날로그 입력 (CX25843) | 지원 안 함 |
 
@@ -119,8 +119,13 @@ sudo modprobe -a dvb_usb_v2 lgdt3305 xc5000 && sudo insmod dvb_usb_skytv.ko
 - `driver/dvb_usb.h`, `lgdt3305.h`, `xc5000.h`는 커널 소스 v7.0의 내부 헤더 사본입니다. 커널 메이저 버전이 크게 바뀌면 같은 버전의 헤더로 바꿔야 할 수 있습니다.
 
 ### 4. 확인
+USB를 꽂으면 드라이버가 FX2 펌웨어를 올리고, 장치가 스스로 다시 연결된 뒤 DVB 장치로 등록됩니다.
 ```sh
 sudo dmesg | grep -iE "skytv|LGDT3304|xc5000"
+#  dvb_usb_v2: found a 'Skydigital SKYTV HD USB mini' in cold state
+#  dvb_usb_v2: downloading firmware from file 'dvb-usb-skytv-hdusbmini.fw'
+#  usb 1-9: USB disconnect, device number 6                  <- 펌웨어 실행 후 재연결 (정상)
+#  usb 1-9: Manufacturer: SKYDIGITAL
 #  dvb_usb_v2: found a 'Skydigital SKYTV HD USB mini' in warm state
 #  DVB: registering adapter 0 frontend 0 (LG Electronics LGDT3304 VSB/QAM Frontend)...
 #  xc5000: Successfully identified at address 0x61
@@ -233,10 +238,11 @@ tsp -I dvb --adapter 0 --delivery-system ATSC --frequency 479000000 --modulation
 | 비트레이트 | 19,392,8xx b/s로 안정 (ATSC 8-VSB 19,392,658 b/s) |
 | 30초 TSDuck 수신 (431,546 패킷) | invalid sync 0, PCR 1,336개 모두 정상(지터 1 ms 초과 0건) |
 | 연속성 오류 | 시작 직후 첫 351개 패킷 안에서만, 존재하지 않는 PID에서 발생 |
-| 전송 오류(TEI) 표시 패킷 | 357개 (0.08%). 신호 품질에 따라 달라지며, 원인은 따로 분석하지 않음 |
+| 전송 오류(TEI) 표시 패킷 | 357개 (0.08%). USB 재연결 후 8초 수신에서도 정확히 357개가 나와, 수신 시작 시점에 한 번 생기는 것으로 추정 (원인 미분석) |
 | 10초 녹화(dvbv5-zap) | 연속성 오류 0, MPEG-2 1080i 영상과 AC-3 음성 정상 디코딩 |
 | 연속 튜닝 | sleep을 거쳐 ch15 → ch16 → ch3 → ch15 모두 lock |
 | 채널 스캔 | 지상파 MBC, KBS1, SBS, KBS2와 VHF 3~5번, 사내망 케이블 8-VSB 채널 다수 lock |
+| USB 재연결 (2026-10-19) | cold state → 펌웨어 업로드 → warm state → `/dev/dvb/adapter0` → ch15 KBS1 수신 (sync 오류 0) |
 
 ## 문제 해결
 
